@@ -2,6 +2,7 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
+<!--    手动调用创建数据库使用-->
     <bean id="processEngineConfiguration" class="org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration">
 
         <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/workflow_db_manual?useUnicode=yes&amp;characterEncoding=UTF-8" />
