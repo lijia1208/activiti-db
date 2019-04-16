@@ -2,6 +2,7 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
+<!--    springBoot 集成activiti 6.0需要该文件，配置从yml读取-->
 <!--    <bean id="processEngineConfiguration" class="org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration">-->
 
 <!--        <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/workflow_db?useUnicode=yes&amp;characterEncoding=UTF-8" />-->
