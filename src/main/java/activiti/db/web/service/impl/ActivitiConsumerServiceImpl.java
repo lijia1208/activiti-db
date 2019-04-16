@@ -47,8 +47,6 @@ public class ActivitiConsumerServiceImpl implements ActivitiConsumerService {
         logger.info("调用流程存储服务，查询部署数量："
                 + repositoryService.createDeploymentQuery().count());
 
-
-
         Map<String, Object> startActivitiVariables = createStartActivitiVariables();
 
         //流程启动
