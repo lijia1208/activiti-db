@@ -27,7 +27,7 @@ public class DbController {
     @GetMapping("db")
     public String index(@RequestParam("dbName") String dbName) {
 
-        return MessageFormat.format("other develop init activiti db {0}", dbName);
+        return MessageFormat.format("new other develop init activiti db {0}", dbName);
     }
 
     @PostMapping("process")
