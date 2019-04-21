@@ -5,6 +5,7 @@ import org.activiti.engine.task.Task;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * @author maimaivv
@@ -15,9 +16,13 @@ public interface ActivitiConsumerService {
     @Transactional(rollbackFor = Exception.class)
     boolean startActivitiProcess(String processDefinitionKey);
 
-    List<Task> getTasks(String assignee);
+    Stream<Task> getTasks(String assignee);
+
+    Stream getProcessTasks(String processDefinitionKey, String assignee);
 
     List<TaskVo> getTaskVos(String assignee);
+
+    List<TaskVo> getProcessTaskVos(String processDefinitionKey, String assignee);
 
     void addComment(String taskId, String processInstanceId, String message);
 
