@@ -2,6 +2,7 @@ package activiti.db.web.service.impl;
 
 import activiti.db.web.model.vo.TaskVo;
 import activiti.db.web.service.ActivitiConsumerService;
+import com.mysql.jdbc.StringUtils;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
@@ -9,14 +10,17 @@ import org.activiti.engine.impl.persistence.entity.CommentEntityImpl;
 import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
 import org.activiti.engine.task.Comment;
 import org.activiti.engine.task.Task;
+import org.activiti.engine.task.TaskQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.constraints.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author maimaivv
@@ -58,41 +62,87 @@ public class ActivitiConsumerServiceImpl implements ActivitiConsumerService {
     }
 
     @Override
-    public List<Task> getTasks(String assignee) {
-        Optional<List<Task>> tasks = Optional.ofNullable(
-                taskService.createTaskQuery()
-                        .taskAssignee(assignee)
-                        .list());
-
-        tasks.orElse(new ArrayList<>()).stream()
-                .forEach(task -> logTaskInfo(task));
-
-        return tasks.orElse(new ArrayList<>());
+    public Stream<Task> getTasks(String assignee) {
+        return getTasksByTaskQuery(getTaskQuery(assignee)).stream();
     }
+
+    @Override
+    public Stream<Task> getProcessTasks(String assignee, String processDefinitionKey) {
+        return getTasksByTaskQuery(getTaskQuery(assignee, processDefinitionKey))
+                .stream();
+    }
+
+    private List<Task> getTasksByTaskQuery(@NotNull TaskQuery taskQuery) {
+
+        List<Task> tasks = Optional.ofNullable(
+                taskQuery.list()).orElse(new ArrayList<>());
+
+        recordTaskInfo(tasks);
+
+        return tasks;
+    }
+
+    private void recordTaskInfo(List<Task> tasks) {
+        tasks.forEach(task -> logTaskInfo(task));
+    }
+
+
+    private TaskQuery getTaskQuery(@NotNull String assignee) {
+        return getTaskQuery(assignee, "");
+    }
+
+    private TaskQuery getTaskQuery(@NotNull String assignee, String processDefinitionKey) {
+    return getTaskQuery(assignee, processDefinitionKey, "");
+    }
+
+    // TODO @NotNull注解的使用方式
+    private TaskQuery getTaskQuery(@NotNull String assignee, String processDefinitionKey, String demoPrarm) {
+        TaskQuery taskQuery = taskService.createTaskQuery()
+                .taskAssignee(assignee);
+
+        taskQuery = StringUtils.isNullOrEmpty(processDefinitionKey) ?
+                taskQuery : taskQuery.processDefinitionKey(processDefinitionKey);
+
+        return taskQuery;
+    }
+
+
+
 
     @Override
     public List<TaskVo> getTaskVos(String assignee) {
         List<TaskVo> taskVos = this.getTasks(assignee)
-                .stream()
-                .map(task -> {
-                    Comment comment = taskService.getTaskComments(task.getId())
-                            .stream()
-                            .findFirst()
-                            .orElse(new CommentEntityImpl());
-
-                    logger.info(taskService.getVariables(task.getId()).toString());
-
-                    return new TaskVo(task.getId(), task.getName(), comment.getFullMessage());
-                })
+                .map(task -> createTaskVo(task))
                 .collect(Collectors.toList());
-
 
 
         return taskVos;
     }
 
     @Override
-    public void addComment(String taskId, String processInstanceId, String message){
+    public List<TaskVo> getProcessTaskVos(String processDefinitionKey, String assignee) {
+
+        List<TaskVo> taskVos = this.getProcessTasks(processDefinitionKey, assignee)
+                .map(task -> createTaskVo(task))
+                .collect(Collectors.toList());
+
+
+        return taskVos;
+    }
+
+    private TaskVo createTaskVo(Task task) {
+        Comment comment = taskService.getTaskComments(task.getId())
+                .stream()
+                .findFirst()
+                .orElse(new CommentEntityImpl());
+
+        logger.info(taskService.getVariables(task.getId()).toString());
+
+        return new TaskVo(task.getId(), task.getName(), comment.getFullMessage());
+    }
+
+    @Override
+    public void addComment(String taskId, String processInstanceId, String message) {
 
         taskService.addComment(taskId, processInstanceId, message);
 
@@ -106,7 +156,7 @@ public class ActivitiConsumerServiceImpl implements ActivitiConsumerService {
     }
 
     @Override
-    public void completeTask(String taskId, String userId){
+    public void completeTask(String taskId, String userId) {
         taskService.claim(taskId, userId);
 
         taskService.complete(taskId);
