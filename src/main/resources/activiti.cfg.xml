@@ -3,19 +3,19 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 <!--    手动调用创建数据库使用-->
-    <bean id="processEngineConfiguration" class="org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration">
+<!--    <bean id="processEngineConfiguration" class="org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration">-->
 
-        <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/workflow_db_manual?useUnicode=yes&amp;characterEncoding=UTF-8" />
-        <property name="jdbcDriver" value="com.mysql.jdbc.Driver" />
-        <property name="jdbcUsername" value="root" />
-        <property name="jdbcPassword" value="123456" />
+<!--        <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/workflow_db_manual?useUnicode=yes&amp;characterEncoding=UTF-8" />-->
+<!--        <property name="jdbcDriver" value="com.mysql.jdbc.Driver" />-->
+<!--        <property name="jdbcUsername" value="root" />-->
+<!--        <property name="jdbcPassword" value="123456" />-->
 
-        <property name="databaseSchemaUpdate" value="true" />
+<!--        <property name="databaseSchemaUpdate" value="true" />-->
 
-        <property name="asyncExecutorActivate" value="false" />
+<!--        <property name="asyncExecutorActivate" value="false" />-->
 
-        <property name="mailServerHost" value="mail.my-corp.com" />
-        <property name="mailServerPort" value="5025" />
-    </bean>
+<!--        <property name="mailServerHost" value="mail.my-corp.com" />-->
+<!--        <property name="mailServerPort" value="5025" />-->
+<!--    </bean>-->
 
 </beans>

@@ -16,7 +16,7 @@ public class ActivitiDbApplication {
     public static void main(String[] args) {
         // 读取activiti.cfg.xml中的配置，手动创建表
         //DbSchemaCreate.main(args);
-        DbSchemaUpdate.main(args);
+        //DbSchemaUpdate.main(args);
         SpringApplication.run(ActivitiDbApplication.class, args);
     }
 }
