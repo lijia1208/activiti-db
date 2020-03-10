@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @RequestMapping(value = "/v1/activiti", produces = "application/json;charset=utf-8")
 public class DbController {
 
-    public static String processDefinitionKey = "expense";
+    public static String processDefinitionKey = "leave";
 
     @Autowired
     private ActivitiConsumerService activitiConsumerService;
@@ -31,9 +31,9 @@ public class DbController {
         return MessageFormat.format("other develop init activiti db {0}", dbName);
     }
 
-    @PostMapping("process")
-    public void startProcessInstance() {
-        activitiConsumerService.startActivitiProcess(DbController.processDefinitionKey);
+    @PostMapping("process/{userId}/start")
+    public void startProcessInstance(@PathVariable("userId") String userId) {
+        activitiConsumerService.startActivitiProcess(DbController.processDefinitionKey, userId);
     }
 
     @GetMapping("tasks")

@@ -1,13 +1,17 @@
 package activiti.db.web.service.impl;
 
+import activiti.db.web.entity.DummyTenantInfoHolder;
 import activiti.db.web.model.vo.TaskVo;
 import activiti.db.web.service.ActivitiConsumerService;
 import com.mysql.jdbc.StringUtils;
+import org.activiti.engine.IdentityService;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
+import org.activiti.engine.impl.cfg.multitenant.TenantInfoHolder;
 import org.activiti.engine.impl.persistence.entity.CommentEntityImpl;
 import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
+import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.task.Comment;
 import org.activiti.engine.task.Task;
 import org.activiti.engine.task.TaskQuery;
@@ -42,22 +46,41 @@ public class ActivitiConsumerServiceImpl implements ActivitiConsumerService {
     @Autowired
     private RuntimeService runtimeService;
 
+    @Autowired
+    private IdentityService identityService;
+
+    @Autowired
+    private DummyTenantInfoHolder dummyTenantInfoHolder;
+
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean startActivitiProcess(String processDefinitionKey) {
+    public boolean startActivitiProcess(String processDefinitionKey, String userId) {
+
+        dummyTenantInfoHolder.setCurrentUserId(userId);
+        Deployment deployment = repositoryService.createDeployment()
+                .addClasspathResource("processes/leave.bpmn20.xml")
+                .deploy();
 
         logger.info("method startActivitiProcess start....");
 
         logger.info("调用流程存储服务，查询部署数量："
                 + repositoryService.createDeploymentQuery().count());
 
+        String tenantId = "";
+        //String tenantId = "001";
+
         Map<String, Object> startActivitiVariables = createStartActivitiVariables();
 
+        //设置流程的发起用户，并在变量中放入initiator
+        identityService.setAuthenticatedUserId(userId);
         //流程启动
         ExecutionEntity executionEntity = (ExecutionEntity) runtimeService
-                .startProcessInstanceByKey(processDefinitionKey, startActivitiVariables);
+                .startProcessInstanceByKeyAndTenantId(processDefinitionKey, startActivitiVariables, tenantId);
+        identityService.setAuthenticatedUserId(null);
 
         System.out.println("method startActivitiProcess end....");
+
+
         return false;
     }
 
@@ -175,8 +198,13 @@ public class ActivitiConsumerServiceImpl implements ActivitiConsumerService {
 
     private Map<String, Object> createStartActivitiVariables() {
         Map<String, Object> startActivitiVariables = new HashMap<>();
+        //发起流程时，activiti会从authenticatedUserId中读取用户，并放入initiator中
+        //然后才会处理Variables.
+        //所以Variables中的同名变量会再次更新initiator
+        //startActivitiVariables.put("initiator","admin后放的");
         startActivitiVariables.put("apply", "zhangsan");
         startActivitiVariables.put("approve", "lisi");
+
         return startActivitiVariables;
     }
 }

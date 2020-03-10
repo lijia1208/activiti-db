@@ -17,6 +17,8 @@ public class ProcessEngineConfiguration implements ProcessEngineConfigurationCon
         processEngineConfiguration.setActivityFontName("宋体");
         processEngineConfiguration.setLabelFontName("宋体");
         processEngineConfiguration.setAnnotationFontName("宋体");
+
         logger.info("配置字体:" + processEngineConfiguration.getActivityFontName());
     }
+
 }

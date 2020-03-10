@@ -14,7 +14,7 @@ import java.util.stream.Stream;
  */
 public interface ActivitiConsumerService {
     @Transactional(rollbackFor = Exception.class)
-    boolean startActivitiProcess(String processDefinitionKey);
+    boolean startActivitiProcess(String processDefinitionKey, String userId);
 
     Stream<Task> getTasks(String assignee);
 
