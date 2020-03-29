@@ -15,6 +15,7 @@ import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.task.Comment;
 import org.activiti.engine.task.Task;
 import org.activiti.engine.task.TaskQuery;
+import org.apache.commons.lang3.RandomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,18 +57,22 @@ public class ActivitiConsumerServiceImpl implements ActivitiConsumerService {
     @Override
     public boolean startActivitiProcess(String processDefinitionKey, String userId) {
 
+        userId = RandomUtils.nextInt(0, 20000) +"admin";
+
         dummyTenantInfoHolder.setCurrentUserId(userId);
-        Deployment deployment = repositoryService.createDeployment()
-                .addClasspathResource("processes/leave.bpmn20.xml")
-                .deploy();
+        //TODO 无需每次部署最新的，在高并发场景下，版本时按数字递增的，会冲突
+//        Deployment deployment = repositoryService.createDeployment()
+//                .addClasspathResource("processes/leave-with-form.bpmn20.xml")
+//                .deploy();
 
         logger.info("method startActivitiProcess start....");
 
-        logger.info("调用流程存储服务，查询部署数量："
-                + repositoryService.createDeploymentQuery().count());
+//        logger.info("调用流程存储服务，查询部署数量："
+//                + repositoryService.createDeploymentQuery().count());
 
         String tenantId = "";
         //String tenantId = "001";
+        String businessKey = UUID.randomUUID().toString();
 
         Map<String, Object> startActivitiVariables = createStartActivitiVariables();
 
@@ -75,9 +80,10 @@ public class ActivitiConsumerServiceImpl implements ActivitiConsumerService {
         identityService.setAuthenticatedUserId(userId);
         //流程启动
         ExecutionEntity executionEntity = (ExecutionEntity) runtimeService
-                .startProcessInstanceByKeyAndTenantId(processDefinitionKey, startActivitiVariables, tenantId);
+                .startProcessInstanceByKeyAndTenantId(processDefinitionKey, businessKey, startActivitiVariables, tenantId);
         identityService.setAuthenticatedUserId(null);
 
+//        taskService.setAssignee("12513","libi");
         System.out.println("method startActivitiProcess end....");
 
 
@@ -101,6 +107,7 @@ public class ActivitiConsumerServiceImpl implements ActivitiConsumerService {
                 taskQuery.list()).orElse(new ArrayList<>());
 
         recordTaskInfo(tasks);
+
 
         return tasks;
     }

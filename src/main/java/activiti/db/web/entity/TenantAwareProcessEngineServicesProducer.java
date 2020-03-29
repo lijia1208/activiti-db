@@ -21,135 +21,136 @@ package activiti.db.web.entity;
  * @author Thorben Lindhauer
  *
  */
-@Specializes
-public class TenantAwareProcessEngineServicesProducer extends ProcessEngineServicesProducer {
+//@Specializes
+public class TenantAwareProcessEngineServicesProducer {
+//public class TenantAwareProcessEngineServicesProducer extends ProcessEngineServicesProducer {
 
-  @Inject
-  private Tenant tenant;
-
-  @Override
-  @Named
-  @Produces
-  @RequestScoped
-  public ProcessEngine processEngine() {
-    CommandContext commandContext = Context.getCommandContext();
-
-    if (commandContext == null) {
-      return getProcessEngineByTenantId(tenant.getId());
-
-    } else {
-      // used within the process engine (e.g. by the job executor)
-      return commandContext.getProcessEngineConfiguration().getProcessEngine();
-    }
-  }
-
-  protected ProcessEngine getProcessEngineByTenantId(String tenantId) {
-    if (tenantId != null) {
-      ProcessEngine processEngine = BpmPlatform.getProcessEngineService().getProcessEngine(tenantId);
-      if (processEngine != null) {
-        return processEngine;
-      } else {
-        throw new ProcessEngineException("No process engine found for tenant id '" + tenantId + "'.");
-      }
-    } else {
-      throw new ProcessEngineException("No tenant id specified. A process engine can only be retrieved based on a tenant.");
-    }
-  }
-
-  @Override
-  @Produces
-  @Named
-  @RequestScoped
-  public RuntimeService runtimeService() {
-    return processEngine().getRuntimeService();
-  }
-
-  @Override
-  @Produces
-  @Named
-  @RequestScoped
-  public TaskService taskService() {
-    return processEngine().getTaskService();
-  }
-
-  @Override
-  @Produces
-  @Named
-  @RequestScoped
-  public RepositoryService repositoryService() {
-    return processEngine().getRepositoryService();
-  }
-
-  @Override
-  @Produces
-  @Named
-  @RequestScoped
-  public FormService formService() {
-    return processEngine().getFormService();
-  }
-
-  @Override
-  @Produces
-  @Named
-  @RequestScoped
-  public HistoryService historyService() {
-    return processEngine().getHistoryService();
-  }
-
-  @Override
-  @Produces
-  @Named
-  @RequestScoped
-  public IdentityService identityService() {
-    return processEngine().getIdentityService();
-  }
-
-  @Override
-  @Produces
-  @Named
-  @RequestScoped
-  public ManagementService managementService() {
-    return processEngine().getManagementService();
-  }
-
-  @Override
-  @Produces
-  @Named
-  @ApplicationScoped
-  public AuthorizationService authorizationService() {
-    return processEngine().getAuthorizationService();
-  }
-
-  @Override
-  @Produces
-  @Named
-  @ApplicationScoped
-  public FilterService filterService() {
-    return processEngine().getFilterService();
-  }
-
-  @Override
-  @Produces
-  @Named
-  @ApplicationScoped
-  public ExternalTaskService externalTaskService() {
-    return processEngine().getExternalTaskService();
-  }
-
-  @Override
-  @Produces
-  @Named
-  @ApplicationScoped
-  public CaseService caseService() {
-    return processEngine().getCaseService();
-  }
-
-  @Override
-  @Produces
-  @Named
-  @ApplicationScoped
-  public DecisionService decisionService() {
-    return processEngine().getDecisionService();
-  }
+//  @Inject
+//  private Tenant tenant;
+//
+//  @Override
+//  @Named
+//  @Produces
+//  @RequestScoped
+//  public ProcessEngine processEngine() {
+//    CommandContext commandContext = Context.getCommandContext();
+//
+//    if (commandContext == null) {
+//      return getProcessEngineByTenantId(tenant.getId());
+//
+//    } else {
+//      // used within the process engine (e.g. by the job executor)
+//      return commandContext.getProcessEngineConfiguration().getProcessEngine();
+//    }
+//  }
+//
+//  protected ProcessEngine getProcessEngineByTenantId(String tenantId) {
+//    if (tenantId != null) {
+//      ProcessEngine processEngine = BpmPlatform.getProcessEngineService().getProcessEngine(tenantId);
+//      if (processEngine != null) {
+//        return processEngine;
+//      } else {
+//        throw new ProcessEngineException("No process engine found for tenant id '" + tenantId + "'.");
+//      }
+//    } else {
+//      throw new ProcessEngineException("No tenant id specified. A process engine can only be retrieved based on a tenant.");
+//    }
+//  }
+//
+//  @Override
+//  @Produces
+//  @Named
+//  @RequestScoped
+//  public RuntimeService runtimeService() {
+//    return processEngine().getRuntimeService();
+//  }
+//
+//  @Override
+//  @Produces
+//  @Named
+//  @RequestScoped
+//  public TaskService taskService() {
+//    return processEngine().getTaskService();
+//  }
+//
+//  @Override
+//  @Produces
+//  @Named
+//  @RequestScoped
+//  public RepositoryService repositoryService() {
+//    return processEngine().getRepositoryService();
+//  }
+//
+//  @Override
+//  @Produces
+//  @Named
+//  @RequestScoped
+//  public FormService formService() {
+//    return processEngine().getFormService();
+//  }
+//
+//  @Override
+//  @Produces
+//  @Named
+//  @RequestScoped
+//  public HistoryService historyService() {
+//    return processEngine().getHistoryService();
+//  }
+//
+//  @Override
+//  @Produces
+//  @Named
+//  @RequestScoped
+//  public IdentityService identityService() {
+//    return processEngine().getIdentityService();
+//  }
+//
+//  @Override
+//  @Produces
+//  @Named
+//  @RequestScoped
+//  public ManagementService managementService() {
+//    return processEngine().getManagementService();
+//  }
+//
+//  @Override
+//  @Produces
+//  @Named
+//  @ApplicationScoped
+//  public AuthorizationService authorizationService() {
+//    return processEngine().getAuthorizationService();
+//  }
+//
+//  @Override
+//  @Produces
+//  @Named
+//  @ApplicationScoped
+//  public FilterService filterService() {
+//    return processEngine().getFilterService();
+//  }
+//
+//  @Override
+//  @Produces
+//  @Named
+//  @ApplicationScoped
+//  public ExternalTaskService externalTaskService() {
+//    return processEngine().getExternalTaskService();
+//  }
+//
+//  @Override
+//  @Produces
+//  @Named
+//  @ApplicationScoped
+//  public CaseService caseService() {
+//    return processEngine().getCaseService();
+//  }
+//
+//  @Override
+//  @Produces
+//  @Named
+//  @ApplicationScoped
+//  public DecisionService decisionService() {
+//    return processEngine().getDecisionService();
+//  }
 
 }

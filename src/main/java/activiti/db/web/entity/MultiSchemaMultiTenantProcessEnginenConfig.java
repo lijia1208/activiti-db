@@ -15,7 +15,9 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -35,6 +37,7 @@ public class MultiSchemaMultiTenantProcessEnginenConfig {
 
 //        return engineConfig;
 
+        engineConfig.registerTenant("", createDataSource("jdbc:mysql://127.0.0.1:3306/activiti?characterEncoding=UTF-8", "root", "123456", "com.mysql.jdbc.Driver"));
         engineConfig.registerTenant("租户2018", createDataSource("jdbc:mysql://127.0.0.1:3306/activiti_2018?characterEncoding=UTF-8", "root", "123456", "com.mysql.jdbc.Driver"));
         engineConfig.registerTenant("租户2019", createDataSource("jdbc:mysql://127.0.0.1:3306/activiti_2019?characterEncoding=UTF-8", "root", "123456", "com.mysql.jdbc.Driver"));
         engineConfig.registerTenant("租户2020", createDataSource("jdbc:mysql://127.0.0.1:3306/activiti_2020?characterEncoding=UTF-8", "root", "123456", "com.mysql.jdbc.Driver"));
@@ -52,6 +55,20 @@ public class MultiSchemaMultiTenantProcessEnginenConfig {
     public DummyTenantInfoHolder dummyTenantInfoHolder()
     {
         DummyTenantInfoHolder tenantInfoHolder = new DummyTenantInfoHolder();
+
+        List<String> stubUsers = new ArrayList<>();
+        for(int i=0; i<20000; i++)
+        {
+            stubUsers.add(i + "admin");
+        }
+
+        tenantInfoHolder.addTenant("");
+        tenantInfoHolder.addUser("", "admin");
+        stubUsers.forEach(user-> tenantInfoHolder.addUser("", user));
+
+        tenantInfoHolder.addUser("", "lijia");
+        tenantInfoHolder.addUser("", "lililili");
+        tenantInfoHolder.addUser("", "libi");
 
         tenantInfoHolder.addTenant("租户2018");
         tenantInfoHolder.addUser("租户2018", "admin2018");
@@ -71,7 +88,7 @@ public class MultiSchemaMultiTenantProcessEnginenConfig {
 
 
     public DataSource createDataSource(String jdbcUrl, String jdbcUsername, String jdbcPassword, String driver) {
-        Map<String, String> map = new HashMap<>();
+        Map<String, String> map = new HashMap<>(16);
         map.put(DruidDataSourceFactory.PROP_DRIVERCLASSNAME, driver);
         map.put(DruidDataSourceFactory.PROP_URL, jdbcUrl);
         map.put(DruidDataSourceFactory.PROP_USERNAME, jdbcUsername);
